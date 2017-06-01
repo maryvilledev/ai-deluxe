@@ -47,7 +47,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
   }
   cmd := exec.Command("open", "-W", imgPath)
   cmd.Run()
-  fmt.Fprintf(w, "http://localhost:8080/images/" + imgName)
+  fmt.Fprintf(w, "http://aideluxe.maryvilledevcenter.io/images/" + imgName)
 }
 
 func getHandler(w http.ResponseWriter, r *http.Request) {
