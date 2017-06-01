@@ -4,17 +4,25 @@ import {
 } from 'react-bootstrap';
 import { isMobileDevice } from './util';
 import axios from 'axios';
+import Loader from 'halogen/BounceLoader';
 
 const imageSelectorId = 'image-selector';
 const styles = {
   container: {
+    height: '100vh',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
   },
   p: {
     maxWidth: '500px',
+  },
+  loader: {
+    height: '50%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   imageSelector: {
     visibility: 'hidden',
@@ -35,12 +43,16 @@ const styles = {
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { icon: '' };
+    this.state = {
+      icon: '' ,
+      isUploading: false,
+    };
 
     this.handleIconSelected = this.handleIconSelected.bind(this);
   }
 
   handleIconSelected(ev) {
+    this.setState({ isUploading: true });
     const formData = new FormData();
     formData.append('image', ev.target.files[0])
     const config = {
@@ -50,9 +62,16 @@ class App extends Component {
     }
     axios.post('http://aideluxe.maryvilledevcenter.io:8080/test', formData, config)
       .then(res => {
-        this.setState({ icon: res.data })
+        this.setState({
+          icon: res.data,
+          isUploading: false,
+        });
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        this.setState({ isUploading: false });
+        alert('An error occurred while uploading image.')
+        console.log(err)
+      })
 
     ev.preventDefault();
   }
@@ -69,6 +88,15 @@ class App extends Component {
         alt=""
         width="500px"
       /> : null;
+    const loader = this.state.isUploading ?
+      <div style={styles.loader}>
+        <h3>Loading...</h3>
+        <Loader
+          color="#337AB7"
+          size="50px"
+          margin="4px"
+        />
+      </div> : null;
 
     return (
       <div style={styles.container}>
@@ -90,6 +118,7 @@ class App extends Component {
         >
           {isMobileDevice() ? 'Take Image' : 'Upload Image'}
         </Button>
+        {loader}
         {image}
       </div>
     );
