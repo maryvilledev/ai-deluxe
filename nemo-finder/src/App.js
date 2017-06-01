@@ -13,6 +13,9 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
   },
+  p: {
+    maxWidth: '500px',
+  },
   imageSelector: {
     visibility: 'hidden',
     width: '0',
@@ -38,8 +41,6 @@ class App extends Component {
   }
 
   handleIconSelected(ev) {
-    // this.setState({ icon: URL.createObjectURL(ev.target.files[0]) });
-
     const formData = new FormData();
     formData.append('image', ev.target.files[0])
     const config = {
@@ -47,7 +48,7 @@ class App extends Component {
         'Content-Type': 'multipart/form-data',
       },
     }
-    axios.post('http://aideluxe.maryvilledevcenter.io/test', formData, config)
+    axios.post('http://aideluxe.maryvilledevcenter.io:8080/test', formData, config)
       .then(res => {
         this.setState({ icon: res.data })
       })
@@ -68,9 +69,13 @@ class App extends Component {
         alt=""
         width="500px"
       /> : null;
+
     return (
       <div style={styles.container}>
-        <h1>Test App</h1>
+        <h1>Find Nemo!</h1>
+        <p style={styles.p}>
+          Upload an image and our advanced, sentient AI will locate and outline Nemo. If the image doesn't contain Nemo, the AI will drop an "X" on the image.
+        </p>
         <input
           style={styles.imageSelector}
           id={imageSelectorId}
