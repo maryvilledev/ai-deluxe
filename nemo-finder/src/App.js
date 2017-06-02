@@ -121,7 +121,7 @@ class App extends Component {
       <div style={styles.container}>
         <h1>Find {getCharacter()}!</h1>
         <p style={styles.p}>
-          Upload an image and our advanced, sentient AI will locate and outline Nemo. If the image doesn't contain Nemo, the AI will drop an "X" on the image.
+          Upload an image and our advanced, sentient AI will locate and outline {getCharacter()}. If the image doesn't contain {getCharacter()}, the AI will drop an "X" on the image.
         </p>
         <input
           style={styles.imageSelector}
