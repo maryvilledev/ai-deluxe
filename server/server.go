@@ -24,13 +24,6 @@ func main() {
   startServer()
 }
 
-// Helper func to reduce error handling verbosity
-func handleErr(err error) {
-  if err != nil {
-    fmt.Println(err)
-  }
-}
-
 // Initializes the global config vars
 func initGlobals() {
   dirPtr := flag.String(
@@ -63,29 +56,52 @@ func getFormat(fileBytes []byte) (string) {
   return ""
 }
 
-func writeImageFile(imgFile multipart.File) string {
+// Write the image to the file system under the "/images" dir within
+// the path specified by the global "dir" var.
+func writeImageFile(imgFile multipart.File) (string, error) {
   os.Mkdir(dir + "/images", 0777)
   iconBytes, err := ioutil.ReadAll(imgFile)
-  handleErr(err)
+  if err != nil {
+    return "", err
+  }
   imgFile.Close()
   imgType := getFormat(iconBytes)
   imgName := strconv.FormatInt(time.Now().Unix(), 10) + "." + imgType
   imgPath := dir + "/images/" + imgName
   err = ioutil.WriteFile(imgPath, iconBytes, 0777)
-  handleErr(err)
-  return imgPath
+  if err != nil {
+    return "", err
+  }
+  fmt.Println("Wrote: "+imgPath)
+  return imgPath, nil
+}
+
+// Opens an editor to mark up the image. Blocks until the editor
+// is closed.
+func editImage(imgPath string) {
+  fmt.Println("Editing: "+imgPath)
+  cmd := exec.Command("open", "-W", imgPath)
+  cmd.Run()
 }
 
 // Opens an image editor to mark up the image in the request.
 // Returns URL to access the image after editing is completed.
 func postHandler(w http.ResponseWriter, r *http.Request) {
+  fmt.Println("----- FIND: "+path.Base(r.URL.Path)+" -----")
   iconFile, _, err := r.FormFile("image")
-  handleErr(err)
-  imgPath := writeImageFile(iconFile)
-  fmt.Println("Wrote: "+imgPath)
-
-  cmd := exec.Command("open", "-W", imgPath)
-  cmd.Run()
+  if err != nil {
+    fmt.Println(err)
+    http.Error(w, "Invalid request", http.StatusBadRequest)
+    return
+  }
+  imgPath, err := writeImageFile(iconFile)
+  if err != nil {
+    fmt.Println(err)
+    http.Error(w, "Internal server error", http.StatusInternalServerError)
+    return
+  }
+  editImage(imgPath)
+  fmt.Println()
   fmt.Fprintf(w, "http://"+hostname+":"+port+"/images/" + path.Base(imgPath))
 }
 
@@ -93,12 +109,12 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 func getHandler(w http.ResponseWriter, r *http.Request) {
   r.ParseForm()
   resource := dir + r.URL.String()
-  fmt.Println("Serving: "+resource)
+  fmt.Println("Serving: "+resource+"\n")
 
   file, err := os.Open(resource)
   if err != nil {
       fmt.Println(err)
-      http.Error(w, err.Error(), http.StatusNotFound)
+      http.Error(w, "Resource not found", http.StatusNotFound)
       return
   }
 
