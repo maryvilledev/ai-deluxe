@@ -34,13 +34,16 @@ const styles = {
     height: '0',
   },
   icon: {
-    marginTop: '15px',
-    maxWidth: '100%',
-    maxHeight: '100%',
-    borderColor: '#000',
+    margin: '5px',
+    marginTop: '20px',
+    borderColor: '#999999',
     borderWidth: '5px',
     borderStyle: 'solid',
     borderRadius: '5px',
+  },
+  img: {
+    maxWidth: '100%',
+    maxHeight: '100%',
   }
 };
 
@@ -94,6 +97,7 @@ class App extends Component {
     const image = icon && !isUploading ?
       <div style={styles.icon}>
         <img
+          style={styles.img}
           src={this.state.icon}
           alt=""
           width="500px"
