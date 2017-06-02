@@ -31,7 +31,7 @@ const styles = {
     height: '0',
   },
   icon: {
-    marginTop: '5px',
+    marginTop: '15px',
     maxWidth: '100%',
     maxHeight: '100%',
     borderColor: '#000',
@@ -120,6 +120,7 @@ class App extends Component {
         />
         <Button
           bsStyle="primary"
+          disabled={isUploading}
           onClick={this.displayImageSelector}
         >
           {isMobileDevice() ? 'Take Image' : 'Upload Image'}
