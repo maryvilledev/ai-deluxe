@@ -67,7 +67,7 @@ class App extends Component {
         'Content-Type': 'multipart/form-data',
       },
     }
-    axios.post('http://localhost:8080/find/nemo', formData, config)
+    axios.post('http://aideluxe.maryvilledevcenter.io:8080/find/nemo', formData, config)
       .then(res => {
         this.setState({
           icon: res.data,
