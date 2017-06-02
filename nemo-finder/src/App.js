@@ -9,6 +9,8 @@ import {
 import axios from 'axios';
 import Loader from 'halogen/BounceLoader';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const getCharacter = () => {
   const { pathname } = window.location;
   const character = pathname !== '/' ? pathname.substring(1) : 'Nemo';
@@ -73,7 +75,7 @@ class App extends Component {
         'Content-Type': 'multipart/form-data',
       },
     }
-    axios.post(`http://localhost:8080/find/${getCharacter()}`, formData, config)
+    axios.post(`${API_URL}/find/${getCharacter()}`, formData, config)
       .then(res => {
         this.setState({
           icon: res.data,

@@ -18,6 +18,7 @@ import (
 var dir string
 var hostname string
 var port string
+var verbose bool
 
 func main() {
   initGlobals()
@@ -38,10 +39,15 @@ func initGlobals() {
     "port",
     "8080",
     "port to listen on")
+  verbosePtr := flag.Bool(
+    "verbose",
+    false,
+    "use verbose logging")
   flag.Parse()
   dir = *dirPtr
   hostname = *hostnamePtr
   port = *portPtr
+  verbose = *verbosePtr
 }
 
 // Given a raw image, will return the image type as a string.
@@ -72,14 +78,18 @@ func writeImageFile(imgFile multipart.File) (string, error) {
   if err != nil {
     return "", err
   }
-  fmt.Println("Wrote: "+imgPath)
+  if verbose {
+    fmt.Println("Wrote: "+imgPath)
+  }
   return imgPath, nil
 }
 
 // Opens an editor to mark up the image. Blocks until the editor
 // is closed.
 func editImage(imgPath string) {
-  fmt.Println("Editing: "+imgPath)
+  if verbose {
+    fmt.Println("Editing: "+imgPath)
+  }
   cmd := exec.Command("open", "-W", imgPath)
   cmd.Run()
 }
@@ -101,7 +111,9 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
   editImage(imgPath)
-  fmt.Println()
+  if verbose {
+    fmt.Println()
+  }
   fmt.Fprintf(w, "http://"+hostname+":"+port+"/images/" + path.Base(imgPath))
 }
 
@@ -109,8 +121,9 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 func getHandler(w http.ResponseWriter, r *http.Request) {
   r.ParseForm()
   resource := dir + r.URL.String()
-  fmt.Println("Serving: "+resource+"\n")
-
+  if verbose {
+    fmt.Println("Serving: "+resource+"\n")
+  }
   file, err := os.Open(resource)
   if err != nil {
       fmt.Println(err)
