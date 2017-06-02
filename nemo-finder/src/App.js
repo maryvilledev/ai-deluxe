@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import {
   Button,
 } from 'react-bootstrap';
-import { isMobileDevice } from './util';
+import {
+  isMobileDevice,
+  capitalize,
+} from './util';
 import axios from 'axios';
 import Loader from 'halogen/BounceLoader';
 
@@ -82,6 +85,8 @@ class App extends Component {
   }
 
   render() {
+    const { pathname } = window.location;
+    const character = pathname !== '/' ? pathname.substring(1) : 'Nemo';
     const {
       icon,
       isUploading,
@@ -106,7 +111,7 @@ class App extends Component {
 
     return (
       <div style={styles.container}>
-        <h1>Find Nemo!</h1>
+        <h1>Find {capitalize(character)}!</h1>
         <p style={styles.p}>
           Upload an image and our advanced, sentient AI will locate and outline Nemo. If the image doesn't contain Nemo, the AI will drop an "X" on the image.
         </p>
