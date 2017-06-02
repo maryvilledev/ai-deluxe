@@ -16,6 +16,7 @@ const styles = {
   },
   p: {
     maxWidth: '500px',
+    padding: '10px',
   },
   loader: {
     height: '50%',
@@ -81,14 +82,19 @@ class App extends Component {
   }
 
   render() {
-    const image = this.state.icon ?
-      <img
-        style={styles.icon}
-        src={this.state.icon}
-        alt=""
-        width="500px"
-      /> : null;
-    const loader = this.state.isUploading ?
+    const {
+      icon,
+      isUploading,
+    } = this.state;
+    const image = icon && !isUploading ?
+      <div style={styles.icon}>
+        <img
+          src={this.state.icon}
+          alt=""
+          width="500px"
+        />
+      </div> : null;
+    const loader = isUploading ?
       <div style={styles.loader}>
         <h3>Loading...</h3>
         <Loader
