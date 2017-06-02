@@ -9,6 +9,12 @@ import {
 import axios from 'axios';
 import Loader from 'halogen/BounceLoader';
 
+const getCharacter = () => {
+  const { pathname } = window.location;
+  const character = pathname !== '/' ? pathname.substring(1) : 'Nemo';
+  return capitalize(character)
+}
+
 const imageSelectorId = 'image-selector';
 const styles = {
   container: {
@@ -67,7 +73,7 @@ class App extends Component {
         'Content-Type': 'multipart/form-data',
       },
     }
-    axios.post('http://aideluxe.maryvilledevcenter.io:8080/find/nemo', formData, config)
+    axios.post(`http://aideluxe.maryvilledevcenter.io:8080/find/${getCharacter()}`, formData, config)
       .then(res => {
         this.setState({
           icon: res.data,
@@ -88,8 +94,6 @@ class App extends Component {
   }
 
   render() {
-    const { pathname } = window.location;
-    const character = pathname !== '/' ? pathname.substring(1) : 'Nemo';
     const {
       icon,
       isUploading,
@@ -115,7 +119,7 @@ class App extends Component {
 
     return (
       <div style={styles.container}>
-        <h1>Find {capitalize(character)}!</h1>
+        <h1>Find {getCharacter()}!</h1>
         <p style={styles.p}>
           Upload an image and our advanced, sentient AI will locate and outline Nemo. If the image doesn't contain Nemo, the AI will drop an "X" on the image.
         </p>
